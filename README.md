@@ -10,11 +10,15 @@ urlpatterns = [
 ]
 
 from rest_auth.registration.views import SocialLoginView
+
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 
 class GoogleLogin(SocialLoginView):
+
     adapter_class = GoogleOAuth2Adapter
+    
     client_class = OAuth2Client
    
 And that's all, you just need to send the access_token retrieved from android client and everything will (with lucky and some of jedi force) work.
