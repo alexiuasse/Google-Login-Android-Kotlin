@@ -1,22 +1,13 @@
-package com.br.deliveryapp.ui.login.network
-
-import com.br.deliveryapp.util.AppConstants.Companion.AUTH_GOOGLE
-import com.br.deliveryapp.util.AppConstants.Companion.AUTH_GOOGLE_ACCESS_TOKEN
-import com.br.deliveryapp.util.AppConstants.Companion.CHECK_STATUS
-import com.br.deliveryapp.util.database.entity.auth.GoogleSignInAccessTokenDataClass
-import com.br.deliveryapp.util.database.entity.auth.LoginGoogleEntity
-import com.br.deliveryapp.util.database.entity.auth.LoginGoogleResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
 
 interface LoginApi {
-
-    @POST(AUTH_GOOGLE)
-    @Headers("Content-Type: application/json")
+    
+    @POST(URL_TO_YOUR_BACKEND)
     fun postLoginGoogleAsync(@Body data: LoginGoogleEntity): Deferred<Response<LoginGoogleResponse>>
 
-    @POST(AUTH_GOOGLE_ACCESS_TOKEN)
+    @POST("https://www.googleapis.com/oauth2/v4/token")
     @FormUrlEncoded
     fun getAccessTokenAsync(
         @Field("grant_type") grant_type: String,
@@ -26,8 +17,5 @@ interface LoginApi {
         @Field("code") authCode: String,
         @Field("id_token") id_token: String
     ): Deferred<Response<GoogleSignInAccessTokenDataClass>>
-
-    @GET(CHECK_STATUS)
-    fun checkStatusAsync(): Deferred<Response<Any>>
 
 }
