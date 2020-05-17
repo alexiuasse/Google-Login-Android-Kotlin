@@ -4,5 +4,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class LoginGoogleResponse(
-    val key: String
+    // i use django as backend and token authentication, this is the token
+    val token: String
 )

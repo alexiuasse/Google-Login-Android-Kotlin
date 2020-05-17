@@ -1,4 +1,3 @@
-package com.br.deliveryapp.ui.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,12 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.br.deliveryapp.App
-import com.br.deliveryapp.R
-import com.br.deliveryapp.ui.login.viewmodel.LoginViewModel
-import com.br.deliveryapp.ui.main.ActivityMain
-import com.br.deliveryapp.util.data.PreferenceRepository
-import com.br.deliveryapp.util.database.entity.auth.LoginGoogleEntity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -23,7 +16,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
-
 
 class ActivityLogin : AppCompatActivity() {
 
@@ -38,13 +30,11 @@ class ActivityLogin : AppCompatActivity() {
     private lateinit var status: ImageView
     private lateinit var loading: ProgressBar
     private lateinit var loginViewModel: LoginViewModel
-    private lateinit var preferenceRepository: PreferenceRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        preferenceRepository = (application as App).preferenceRepository
         singInGoogle = findViewById(R.id.sign_in_button)
         layout = findViewById(R.id.layout_activityLogin)
         status = findViewById(R.id.imageView_contentLogin_statusServidor)
@@ -57,22 +47,18 @@ class ActivityLogin : AppCompatActivity() {
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.google_login_api))
+            // must request the auth code
             .requestServerAuthCode(getString(R.string.google_login_api))
             .requestEmail()
             .build()
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        preferenceRepository.nightModeLive.observe(this, Observer { nightMode ->
-            nightMode?.let { delegate.localNightMode = it }
-        })
-
         singInGoogle.setOnClickListener { signIn() }
 
         loginViewModel.loginLiveData.observe(this, Observer { loginResponse ->
             loginResponse?.let { login(it.key) }
             if (loginResponse == null) {
-//                status.setImageResource(R.drawable.ic_thumb_down_f44336_24dp)
                 GoogleSignIn.getClient(this, gso).signOut()
                 Snackbar.make(layout, getString(R.string.erro_null), Snackbar.LENGTH_LONG)
                     .setAction(getString(R.string.geral_fechar)) { }
@@ -91,9 +77,7 @@ class ActivityLogin : AppCompatActivity() {
             } else loginViewModel.postGoogleLogin(LoginGoogleEntity(access_token = it.access_token))
         })
 
-        loginViewModel.status.observe(this@ActivityLogin, Observer {
-            if (it == null) status.setImageResource(R.drawable.ic_thumb_down_f44336_24dp)
-        })
+        // show progressbar only when loading something from server
         loginViewModel.loading.observe(this@ActivityLogin, Observer {
             loading.visibility = it
         })
@@ -127,7 +111,6 @@ class ActivityLogin : AppCompatActivity() {
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
-//            Log.d(TAG, "${account?.email}")
             // Signed in successfully, show authenticated UI.
             updateUI(account)
         } catch (e: ApiException) {
@@ -137,12 +120,7 @@ class ActivityLogin : AppCompatActivity() {
         }
     }
 
-    /**
-     * Passar account.idToken para v1/auth/google/ em access_token o retorno é o token a ser utilizado
-     */
     private fun updateUI(account: GoogleSignInAccount?) {
-//        Log.i(TAG, "Sending idToken to server ACCOUNT EMAIL: ${account?.email}")
-//        account?.idToken?.let { LoginGoogleEntity(access_token = it) }?.let { loginViewModel.postGoogleLogin(it) }
         Log.i(TAG, "ACCOUNT AUTH CODE: ${account?.serverAuthCode} ACCOUNT EMAIL: ${account?.email}")
         if (account?.serverAuthCode == null) signIn()
         account?.serverAuthCode?.let {
@@ -150,8 +128,9 @@ class ActivityLogin : AppCompatActivity() {
                 Log.d(TAG, "MAKING CALL TO GET ACCESS TOKEN")
                 loginViewModel.getAcessToken(
                     grant_type = "authorization_code",
-                    client_id = "227003809683-0rg47j4gb295f6qt1sl8di0m2d7n8q5o.apps.googleusercontent.com",
-                    client_secret = "IUclAzUtfKu0f_kEq21-ar8o",
+                    // this is from google api, use the web type
+                    client_id = "YOUR_CLIENT_ID",
+                    client_secret = "YOUR_CLIENT_SECRET",
                     authCode = it,
                     id_token = it1,
                     redirect_uri = ""

@@ -1,9 +1,4 @@
-package com.br.deliveryapp.ui.login.network
 
-import com.br.deliveryapp.util.database.entity.auth.GoogleSignInAccessTokenDataClass
-import com.br.deliveryapp.util.database.entity.auth.LoginGoogleEntity
-import com.br.deliveryapp.util.database.entity.auth.LoginGoogleResponse
-import com.br.deliveryapp.util.network.NewBaseRepository
 
 class LoginRepository(private val apiInterface: LoginApi) : NewBaseRepository() {
 
@@ -44,15 +39,5 @@ class LoginRepository(private val apiInterface: LoginApi) : NewBaseRepository() 
             null
         }
     }
-
-    suspend fun checkStatus(): Any? {
-        return try {
-            safeApiCall(
-                call = { apiInterface.checkStatusAsync().await() },
-                error = "Erro checkstatus"
-            )
-        } catch (ex: Exception) {
-            null
-        }
-    }
+    
 }
