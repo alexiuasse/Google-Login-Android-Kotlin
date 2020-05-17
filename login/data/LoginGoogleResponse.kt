@@ -1,4 +1,3 @@
-package com.br.deliveryapp.util.database.entity.login
 
 import com.squareup.moshi.JsonClass
 
