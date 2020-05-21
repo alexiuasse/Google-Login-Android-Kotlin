@@ -18,7 +18,11 @@ class GoogleLogin(SocialLoginView):
     client_class = OAuth2Client
 ```
 
-**Quick note**
+**Quick note 1**
+
+I am using the webclient oauth2 and not the android one.
+
+**Quick note 2**
 
 Renember to get the right SHA-1 Key and set up in firebase.
 There is two types of SHA-1 key, debug and release.
