@@ -19,14 +19,18 @@ class GoogleLogin(SocialLoginView):
 ```
 
 **Quick note**
+
 Renember to get the right SHA-1 Key and set up in firebase.
 There is two types of SHA-1 key, debug and release.
 
 The debug you can get from android studio:
 
 Run your project
+
 Click on Gradle menu
+
 Expand Gradle Tasks tree
+
 Double click on android -> signingReport
 
 The release you can get from android studio in the similiar way or if you send the .aab to you google play console (GPC), you can retrieve the SHA-1 in console, just go to your app -> click at the rocket -> signature
