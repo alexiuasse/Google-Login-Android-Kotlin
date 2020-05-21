@@ -18,4 +18,19 @@ class GoogleLogin(SocialLoginView):
     client_class = OAuth2Client
 ```
 
+**Quick note**
+Renember to get the right SHA-1 Key and set up in firebase.
+There is two types of SHA-1 key, debug and release.
+
+The debug you can get from android studio:
+
+Run your project
+Click on Gradle menu
+Expand Gradle Tasks tree
+Double click on android -> signingReport
+
+The release you can get from android studio in the similiar way or if you send the .aab to you google play console (GPC), you can retrieve the SHA-1 in console, just go to your app -> click at the rocket -> signature
+
+**If you mess up the SHA-1 key, the login account will return null**
+
 And that's all, you just need to send the access_token retrieved from android client and everything will (with lucky and some of jedi force) work.
